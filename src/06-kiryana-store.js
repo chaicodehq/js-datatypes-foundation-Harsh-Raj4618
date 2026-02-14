@@ -51,21 +51,83 @@
  *   formatBill([{name:"Atta",price:40,qty:2}]) // => "Atta x 2 = Rs.80"
  */
 export function getItemNames(items) {
-  // Your code here
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items.map((item) => item?.name);
 }
 
 export function getAffordableItems(items, maxPrice) {
-  // Your code here
+  if (!Array.isArray(items) || typeof maxPrice !== "number" || Number.isNaN(maxPrice)) {
+    return [];
+  }
+
+  return items.filter(
+    (item) =>
+      item &&
+      typeof item.price === "number" &&
+      !Number.isNaN(item.price) &&
+      item.price <= maxPrice
+  );
 }
 
 export function calculateTotal(items) {
-  // Your code here
+  if (!Array.isArray(items) || items.length === 0) {
+    return 0;
+  }
+
+  return items.reduce((sum, item) => {
+    if (
+      item &&
+      typeof item.price === "number" &&
+      typeof item.qty === "number" &&
+      !Number.isNaN(item.price) &&
+      !Number.isNaN(item.qty)
+    ) {
+      return sum + item.price * item.qty;
+    }
+    return sum;
+  }, 0);
 }
 
 export function sortByPrice(items, ascending) {
-  // Your code here
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  const sorted = [...items].sort((a, b) => {
+    const pa = typeof a?.price === "number" && !Number.isNaN(a.price) ? a.price : 0;
+    const pb = typeof b?.price === "number" && !Number.isNaN(b.price) ? b.price : 0;
+    return ascending ? pa - pb : pb - pa;
+  });
+
+  return sorted;
 }
 
 export function formatBill(items) {
-  // Your code here
+  if (!Array.isArray(items) || items.length === 0) {
+    return "";
+  }
+
+  return items
+    .map((item) => {
+      const name = item?.name;
+      const price = item?.price;
+      const qty = item?.qty;
+
+      if (
+        typeof name === "string" &&
+        typeof price === "number" &&
+        typeof qty === "number" &&
+        !Number.isNaN(price) &&
+        !Number.isNaN(qty)
+      ) {
+        return `${name} x ${qty} = Rs.${price * qty}`;
+      }
+      return "";
+    })
+    .filter(Boolean)
+    .join("\n");
 }
+
